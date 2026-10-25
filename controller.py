@@ -1,3 +1,5 @@
+import requests
+
 def get_tier(score):
     ''' 
     Takes score and evaluates tier for focus level. 
@@ -73,3 +75,24 @@ Rules:
 - Write in second person, starting with "You may have missed".
 - Follow the instruction's sentence count exactly.
 - No preamble or headings. Just the summary."""
+
+def ask_llm(user_prompt):
+    response = requests.post(
+        "http://localhost:11434/api/chat",
+        json={
+            "model": "qwen3.5:2b",
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            "stream": False,
+            "think": False,
+            "options": {"temperature": 0.3},
+        },
+    )
+    return response.json()["message"]["content"]
+
+
+# test it
+test_dip = {"start": 60, "end": 90, "score": 0.18}
+print(ask_llm(build_prompt(test_dip)))
