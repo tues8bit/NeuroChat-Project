@@ -24,8 +24,46 @@ def get_tier(score):
                            "Write 1 sentence as a quick reminder."
         }
 
+# example lecture transcript. times are in seconds.
+# later this will come from real speech-to-text.
+TRANSCRIPT = [
+    {"start": 0,  "end": 30,  "text": "Today we're covering how neurons communicate. Resting membrane potential is about -70 millivolts."},
+    {"start": 30, "end": 60,  "text": "When the neuron passes threshold, around -55 millivolts, voltage-gated sodium channels open."},
+    {"start": 60, "end": 90,  "text": "Sodium rushes in and the membrane shoots up toward +40. That's the rising phase of the action potential."},
+    {"start": 90, "end": 120, "text": "Then potassium channels open, potassium leaves, and the cell repolarizes."},
+]
 
-# test
-tier = get_tier(0.15)
-print(tier["name"])
-print(tier["instruction"])
+def get_text(start, end):
+    '''
+    Grabs text between two times. Returns list with transcript.
+    '''
+    pieces = []
+    for segment in TRANSCRIPT:
+        if segment["end"] > start and segment ["start"] < end:
+            pieces.append(segment["text"])
+    return " ".join(pieces)
+
+def build_prompt(dip):
+    ''' 
+    Takes dip and combines tier instructions and transcript
+    into one message for the LLM.
+    '''
+    tier = get_tier(dip["score"])
+    context = get_text(max(0, dip["start"] - 20), dip["start"])
+    missed = get_text(dip["start"], dip["end"])
+
+    prompt = f"""Attention level: {tier["name"]} (score {dip["score"]} out of 1)
+    
+Context just before:
+{context}
+
+What was said while attention was low:
+{missed}
+
+Instructions: {tier["instruction"]}"""
+
+    return prompt
+
+# test it
+test_dip = {"start": 60, "end": 90, "score": 0.18}
+print(build_prompt(test_dip))
