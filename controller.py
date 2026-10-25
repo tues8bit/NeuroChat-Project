@@ -64,6 +64,12 @@ Instructions: {tier["instruction"]}"""
 
     return prompt
 
-# test it
-test_dip = {"start": 60, "end": 90, "score": 0.18}
-print(build_prompt(test_dip))
+SYSTEM_PROMPT = """You help a student catch up on parts of a lecture they missed.
+An EEG headband measured their attention. You will get one moment where attention
+was low, the transcript from that moment, and a little context from just before it.
+
+Rules:
+- Use ONLY information in the transcript. Never add facts that are not there.
+- Write in second person, starting with "You may have missed".
+- Follow the instruction's sentence count exactly.
+- No preamble or headings. Just the summary."""
