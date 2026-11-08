@@ -3,7 +3,7 @@ Checks the LLM's answers against your rules. Needs Ollama running.
 Run with:  python test_llm.py
 Each dip is sent several times because the model's answers vary.
 """
-import re
+import requests
 
 from controller import ask_llm, build_prompt, get_tier, get_text, load_session
 from eeg_kernel import process_session
