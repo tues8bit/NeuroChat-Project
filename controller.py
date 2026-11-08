@@ -29,22 +29,6 @@ def get_tier(score):
         }
 
 
-# example lecture transcript, 5 minutes. times are in seconds.
-# later this will come from real speech-to-text.
-TRANSCRIPT = [
-    {"start": 0,   "end": 30,  "text": "Today we're covering how neurons communicate. Resting membrane potential is about -70 millivolts."},
-    {"start": 30,  "end": 60,  "text": "The sodium-potassium pump keeps it there by moving 3 sodium ions out and 2 potassium ions in."},
-    {"start": 60,  "end": 90,  "text": "When the neuron passes threshold, around -55 millivolts, voltage-gated sodium channels open."},
-    {"start": 90,  "end": 120, "text": "Sodium rushes in and the membrane shoots up toward +40. That's the rising phase of the action potential."},
-    {"start": 120, "end": 150, "text": "Then potassium channels open, potassium leaves, and the cell repolarizes."},
-    {"start": 150, "end": 180, "text": "It overshoots below rest, called hyperpolarization, which helps cause the refractory period."},
-    {"start": 180, "end": 210, "text": "During the absolute refractory period, no new spike can fire no matter how strong the stimulus."},
-    {"start": 210, "end": 240, "text": "Myelin insulates the axon so the signal jumps between nodes of Ranvier. This is saltatory conduction."},
-    {"start": 240, "end": 270, "text": "At the axon terminal, calcium enters and triggers release of neurotransmitter into the synapse."},
-    {"start": 270, "end": 300, "text": "The neurotransmitter binds receptors on the next neuron, and the process starts again."},
-]
-
-
 def get_text(start, end):
     '''
     Grabs text between two times. Returns one string of transcript.
