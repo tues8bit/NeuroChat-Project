@@ -1,6 +1,6 @@
 import requests
 
-from eeg_kernel import make_fake_eeg, process_session
+from eeg_kernel import load_muse_csv, process_session, save_scores
 
 
 def get_tier(score):
@@ -8,14 +8,14 @@ def get_tier(score):
     Takes score and evaluates tier for focus level.
     Returns dictionary containing tier level and instruction for LLM.
     '''
-    if score < 0.15:
+    if score < 0.2:
         return {
             "name": "very low",
             "instruction": "The listener likely missed this completely. "
                            "Write 3 sentences: re-explain the main idea simply, "
                            "then give the one key fact to remember."
         }
-    elif score < 0.25:
+    elif score < 0.3:
         return {
             "name": "low",
             "instruction": "The listener caught part of this. "
@@ -106,23 +106,22 @@ def ask_llm(user_prompt):
     return response.json()["message"]["content"]
 
 
-def fake_session():
+def load_session(folder="data"):
     '''
-    Makes a fake 5-minute lecture with 3 zone-outs of different depths,
-    plus the 2-minute relax and task calibration recordings.
+    Reads the 3 recordings from CSV files:
+    the lecture, plus the relax and task calibration recordings.
+    To use real data, put real files with these names in the folder.
     '''
-    focus = [1.0] * 300
-    focus[40:80] = [0.0] * 40      # deep zone-out
-    focus[130:165] = [0.5] * 35    # medium
-    focus[210:245] = [0.7] * 35    # light
-    lecture = make_fake_eeg(focus, seed=3)
-    relax = make_fake_eeg([0.0] * 120, seed=1)
-    task = make_fake_eeg([1.0] * 120, seed=2)
+    lecture = load_muse_csv(f"{folder}/lecture.csv")
+    relax = load_muse_csv(f"{folder}/relax.csv")
+    task = load_muse_csv(f"{folder}/task.csv")
     return lecture, relax, task
 
 
 if __name__ == "__main__":
-    scores, dips = process_session(*fake_session())
+    rows, scores, dips = process_session(*load_session())
+    save_scores("data/scores.csv", rows)
+    print("Saved theta/alpha/beta/engagement for every window to data/scores.csv")
     print(f"Found {len(dips)} dips\n")
     for dip in dips:
         print(f"--- {dip['start']}s to {dip['end']}s, score {dip['score']}, "
