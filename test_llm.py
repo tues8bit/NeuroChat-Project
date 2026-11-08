@@ -5,7 +5,7 @@ Each dip is sent several times because the model's answers vary.
 """
 import re
 
-from controller import ask_llm, build_prompt, get_tier, get_text, fake_session
+from controller import ask_llm, build_prompt, get_tier, get_text, load_session
 from eeg_kernel import process_session
 
 RUNS = 3
@@ -22,7 +22,7 @@ def made_up_numbers(answer, source):
 
 
 def main():
-    _, dips = process_session(*fake_session())
+    _, _, dips = process_session(*load_session())
     passed = total = 0
     for dip in dips:
         tier = get_tier(dip["score"])["name"]
